@@ -104,7 +104,7 @@ const Index = () => {
               started.
             </p>
             <Button size="lg" asChild>
-              <Link to="/products">
+              <Link to="/auth">
                 Get Started <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>

@@ -20,11 +20,15 @@ import ProductCard from "@/components/ui/ProductCard";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Products = () => {
   const { products, showSameHostel, toggleSameHostel } = useProducts();
 
   const { user } = useAuth();
+
+  const isMobile = useIsMobile();
+  
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -68,11 +72,42 @@ const Products = () => {
       <main className="pt-20 pb-16 min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          { isMobile ?
+              <Button asChild size="sm">
+                <Link to="/listing">
+                  <Plus className="h-4 w-4 mr-1" />
+                  Sell Item
+                </Link>
+              </Button>
+               : <></>}
+               { isMobile ?
+
+<div className="flex flex-wrap gap-4 mb-4">
+  <div className="relative flex-1 min-w-[200px]">
+    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+    <Input
+      placeholder="Search products..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="pl-9"
+    />
+    {searchTerm && (
+      <button
+        onClick={() => setSearchTerm("")}
+        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+      >
+        <X className="h-4 w-4" />
+      </button>
+    )}
+  </div>
+</div>
+
+: <></>}
             <h1 className="text-2xl font-bold text-gray-900">
               Browse Products
             </h1>
 
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className={isMobile ? "flex justify-between" : "flex flex-col sm:flex-row gap-2"}>
               <div className="flex items-center gap-2">
                 <Switch
                   id="hostel-mode"
@@ -91,26 +126,31 @@ const Products = () => {
                 >
                   Same Hostel Mode
                 </Label>
+
               </div>
 
               <Button
                 variant="outline"
                 size="sm"
-                className="md:ml-2"
+                className={isMobile ? "w-3 border-none bg-none" : "md:ml-2"}
                 onClick={() => setShowFilters(!showFilters)}
-              >
+                >
                 <Filter className="h-4 w-4 mr-1" />
-                {showFilters ? "Hide Filters" : "Show Filters"}
+                {!isMobile ? showFilters ? "Hide Filters" : "Show Filters" : null}
               </Button>
 
-              <Button asChild size="sm">
-                <Link to="/listing">
-                  <Plus className="h-4 w-4 mr-1" />
+                  { !isMobile ?
+                    <Button asChild size="sm">
+                    <Link to="/listing">
+                    <Plus className="h-4 w-4 mr-1" />
                   Sell Item
                 </Link>
               </Button>
+               : <></>}
             </div>
           </div>
+
+          { !isMobile ?
 
           <div className="flex flex-wrap gap-4 mb-4">
             <div className="relative flex-1 min-w-[200px]">
@@ -131,6 +171,8 @@ const Products = () => {
               )}
             </div>
           </div>
+
+          : <></>}
 
           {showFilters && (
             <div className="bg-gray-50 p-4 rounded-lg mb-6 animate-fade-in flex flex-wrap gap-4">
