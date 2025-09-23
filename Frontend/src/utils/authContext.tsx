@@ -27,7 +27,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem("token");
@@ -36,7 +36,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           const { data } = await axios.get<User>(`${import.meta.env.VITE_BACKEND}/api/auth/getUser`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          
           setUser(data);
         } catch (error) {
           console.error("Failed to fetch user:", error);
@@ -46,14 +45,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       setIsLoading(false);
     };
-
     checkAuth();
   }, []);
 
   
   const register = async (name: string, email: string, password: string) => {
     try {
-      const { data } = await axios.post<{ user: User; token: string }>(`${import.meta.env.VITE_BACKEND}/api/auth/register`, {
+      
+      const { data } = await axios.post<{ user: User }>(`${import.meta.env.VITE_BACKEND}/api/auth/register`, {
         name,
         email,
         password,
@@ -61,7 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       await setUser(data.user);
       localStorage.setItem("tempUserId", data.user._id);
-      toast.success("Registered successfully!");
+      toast.success("Check email for OTP");
       navigate("/verify");
     } catch (error: any) {
       console.error("Registration failed:", error);

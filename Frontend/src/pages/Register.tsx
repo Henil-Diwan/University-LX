@@ -39,7 +39,7 @@ const Register = () => {
     try {
       await register(name, email, password);
     } catch (error) {
-      console.error("Register error:", error);
+      console.error("Register error:", error.message || error);
       toast.error(error);
     } finally {
       setIsSubmitting(false);

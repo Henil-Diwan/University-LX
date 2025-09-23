@@ -253,7 +253,7 @@ const ProductDetail = () => {
                   <div className="space-y-3">
                     <h2 className="text-lg font-semibold">Owner Actions</h2>
                     <div className="flex flex-col sm:flex-row gap-3">
-                      <Button onClick={handleMarkAsSold} className="flex-1">
+                      <Button onClick={handleDelete} className="flex-1">
                         <CheckCircle className="h-4 w-4 mr-2" />
                         Mark as Sold
                       </Button>

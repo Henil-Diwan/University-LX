@@ -22,7 +22,7 @@ import Footer from "@/components/layout/Footer";
 
 const UserProducts = () => {
   const { userProducts, showSameHostel, toggleSameHostel } = useProducts();
-
+  
   const { user } = useAuth();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,7 +41,7 @@ const UserProducts = () => {
 
     return matchesSearch && matchesCategory;
   });
-
+  
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (sortBy === "newest") {
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
