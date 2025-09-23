@@ -16,7 +16,6 @@ exports.getAllProducts = async (req, res) => {
       .populate("seller", "name email")
       .populate("likes")
       .populate("savedBy");
-
     res.status(200).json(products);
   } catch (err) {
     res
@@ -137,16 +136,15 @@ exports.markAsSold = async (req, res) => {
     if (!product || product.seller.toString() !== req.user.id) {
       return res
         .status(403)
-        .json({ message: "Unauthorized to mark this product as sold" });
+        .json({ message: "Unauthorized to delete this product" });
     }
 
-    product.isSold = true;
-    await product.save();
-    res.status(200).json(product);
+    await Product.findByIdAndDelete(id);
+    res.status(200).json({ message: "Product deleted successfully" });
   } catch (err) {
     res
       .status(500)
-      .json({ message: "Failed to mark product as sold", error: err.message });
+      .json({ message: "Failed to delete product", error: err.message });
   }
 };
 

@@ -4,6 +4,9 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
+const Banned = require("../models/Banned");
+const crypto = require("crypto");
+
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -19,6 +22,7 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
+
 exports.registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -27,7 +31,18 @@ exports.registerUser = async (req, res) => {
   }
 
   try {
-    const existingUser = await User.findOne({ email });
+    const normalizedEmail = String(email).trim().toLowerCase();
+
+    // NEW: check banned list
+    const bannedEntry = await Banned.findOne({ email: normalizedEmail });
+    if (bannedEntry) {
+      return res.status(403).json({
+        message: "This email is banned and cannot register.",
+        reason: bannedEntry.reason || undefined,
+      });
+    }
+
+    const existingUser = await User.findOne({ email: normalizedEmail });
     let user;
     if (existingUser && existingUser.isVerified) {
       return res.status(400).json({ message: "Email already in use" });
@@ -44,7 +59,7 @@ exports.registerUser = async (req, res) => {
     } else {
       user = await User.create({
         name,
-        email,
+        email: normalizedEmail,
         password,
         hostelType: null,
         hostelBlock: null,
@@ -52,7 +67,8 @@ exports.registerUser = async (req, res) => {
       });
     }
 
-    const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
+    const otp = `${crypto.randomInt(100000, 999999)}`;
+
     let emaildata = {
       from: {
         name: "Campus Kart",
@@ -76,11 +92,13 @@ exports.registerUser = async (req, res) => {
     } catch (error) {
       console.log(error);
     }
+     
 
+
+    
     res.status(201).json({
       id: user._id,
       user,
-      token: generateToken(user._id),
     });
   } catch (err) {
     res
