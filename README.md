@@ -1,4 +1,4 @@
-# CampusOLX — University LX
+# University LX
 
 > A hostel-aware campus marketplace where verified university students can list, discover, save and buy second-hand items from peers inside the same campus, with WhatsApp as the off-platform contact channel.
 
